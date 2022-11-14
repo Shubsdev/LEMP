@@ -111,3 +111,18 @@ Your new website is now active, but the web root /var/www/lempproject is still e
 Now go to your browser and try to open your website URL using IP address:
 
 <img width="523" alt="image" src="https://user-images.githubusercontent.com/102925329/201753042-3736ed97-7d0c-46d5-a3d8-385f98d9d5c9.png">
+
+**Testing PHP on SERVER**
+
+You can do this by creating a test PHP file in your document root. Open a new file called info.php within your document root in your text editor:
+
+       sudo nano /var/www/lempproject/info.php
+ 
+ Paste this code:
+       
+       <?php
+        phpinfo();
+        
+  You can now access this page in your web browser by visiting the domain name or public IP address you’ve set up in your Nginx configuration file, followed by /info.php:
+  
+  <img width="525" alt="image" src="https://user-images.githubusercontent.com/102925329/201762376-42eba92f-03f7-4de1-b9b2-b94338806cf8.png">
