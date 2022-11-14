@@ -92,3 +92,22 @@ Then, create and open a new configuration file in Nginx’s sites-available dire
 
     }
 
+Activate your configuration by linking to the config file from Nginx’s sites-enabled directory:
+
+     sudo ln -s /etc/nginx/sites-available/lempproject /etc/nginx/sites-enabled/
+     sudo nginx -t
+     
+<img width="495" alt="image" src="https://user-images.githubusercontent.com/102925329/201751974-704fccfa-af9c-40c3-8693-2c71b9260c22.png">
+
+We also need to disable default Nginx host that is currently configured to listen on port 80, for this run:
+
+    sudo unlink /etc/nginx/sites-enabled/default
+    sudo systemctl reload nginx
+Your new website is now active, but the web root /var/www/lempproject is still empty. Create an index.html file in that location so that we can test that your new server block works as expected:
+
+    sudo echo 'Hello LEMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/lempproject/index.html
+    
+    
+Now go to your browser and try to open your website URL using IP address:
+
+<img width="523" alt="image" src="https://user-images.githubusercontent.com/102925329/201753042-3736ed97-7d0c-46d5-a3d8-385f98d9d5c9.png">
