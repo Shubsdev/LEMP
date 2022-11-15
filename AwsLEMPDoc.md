@@ -126,3 +126,86 @@ You can do this by creating a test PHP file in your document root. Open a new fi
   You can now access this page in your web browser by visiting the domain name or public IP address you’ve set up in your Nginx configuration file, followed by /info.php:
   
   <img width="525" alt="image" src="https://user-images.githubusercontent.com/102925329/201762376-42eba92f-03f7-4de1-b9b2-b94338806cf8.png">
+
+
+**RETRIEVE DATA FROM MYSQL WITH PHP**
+
+First, connect to the MySQL console using the root account:
+
+    sudo mysql
+
+To create a new database, run the following command from your MySQL console:
+
+    CREATE DATABASE new;
+    
+Now you can create a new user and grant him full privileges on the database you have just created : 
+
+    CREATE USER 'example_user'@'%' IDENTIFIED WITH mysql_native_password BY 'password';
+Now we need to give this user permission over the new database:
+
+    GRANT ALL ON new.* TO 'example_user'@'%';
+
+Now exit the MySQL shell with:
+
+    mysql> exit
+You can test if the new user has the proper permissions by logging in to the MySQL console again, this time using the custom user credentials:
+
+    mysql -u example_user -p
+    
+<img width="488" alt="image" src="https://user-images.githubusercontent.com/102925329/201896362-386a0095-7d6e-4bc8-be12-a3b80b5bc2e1.png">
+
+After logging in to the MySQL console, confirm that you have access to the new database:
+
+    SHOW DATABASES;
+<img width="494" alt="image" src="https://user-images.githubusercontent.com/102925329/201896651-1d276ea8-b41e-4cb1-90b7-cc387bc72d1f.png">
+
+Next, we’ll create a test table named todo_list. From the MySQL console, run the following statement:
+
+    CREATE TABLE new.todo_list (
+    mysql>     item_id INT AUTO_INCREMENT,
+    mysql>     content VARCHAR(255),
+    mysql>     PRIMARY KEY(item_id)
+    mysql> );
+Insert a few rows of content in the test table. You might want to repeat the next command a few times, using different VALUES:
+
+    mysql> INSERT INTO new.todo_list (content) VALUES ("Is this Playing?");
+    
+To confirm that the data was successfully saved to your table, run:
+
+    SELECT * FROM new.todo_list;
+<img width="495" alt="image" src="https://user-images.githubusercontent.com/102925329/201897362-7900f93b-46db-4176-b313-6157968ed775.png">
+
+After confirming that you have valid data in your test table, you can exit the MySQL console:
+
+    mysql> exit
+Now you can create a PHP script that will connect to MySQL and query for your content. Create a new PHP file in your custom web root directory using your preferred editor.
+    
+    sudo nano /var/www/lempproject/todo_list.php
+    
+Copy this content into your todo_list.php script:
+
+    <?php
+    $user = "example_user";
+    $password = "password";
+    $database = "new";
+    $table = "todo_list";
+
+    try {
+    $db = new PDO("mysql:host=localhost;dbname=$database", $user, $password);
+    echo "<h2>TODO</h2><ol>";
+    foreach($db->query("SELECT content FROM $table") as $row) {
+    echo "<li>" . $row['content'] . "</li>";
+    }
+    echo "</ol>";
+     } catch (PDOException $e) {
+    print "Error!: " . $e->getMessage() . "<br/>";
+    die();
+     }
+     
+Save and close the file when you are done editing.
+
+You can now access this page in your web browser by visiting the domain name or public IP address configured for your website, followed by /todo_list.php:
+
+<img width="522" alt="image" src="https://user-images.githubusercontent.com/102925329/201898172-3c193f4c-378f-47cb-88f5-c5db5de73001.png">
+
+That means your PHP environment is ready to connect and interact with your MySQL server.
